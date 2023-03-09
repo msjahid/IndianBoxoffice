@@ -19,7 +19,7 @@ class MyApp:
                 List of Indian Highest Grossing Movies
             </h1>
         """
-        csv_file_path = './data/highest_grossing_indian_films.csv'
+        csv_file_path = os.environ['CSV_URL']
         if not os.path.exists(csv_file_path):
             print(f"File not found at {csv_file_path}.")
             # handle the exception as per your requirement

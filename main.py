@@ -2,7 +2,7 @@ import asyncio
 import os.path
 from data.buildcsv import create_csv_file
 
-csv_file_path = './data/highest_grossing_indian_films.csv'
+csv_file_path = os.environ['CSV_URL']
 
 
 async def main():
