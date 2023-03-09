@@ -23,7 +23,7 @@ if response.status_code == 200:
             headers = [header.text.strip() for header in header_row.find_all('th')[:-1]]
 
             # Create the file if it doesn't exist
-            file_path = os.path.join(current_dir, os.environ['CSV_URL'])
+            file_path = os.path.join(current_dir, '../data/highest_grossing_indian_films.csv')
             if not os.path.isfile(file_path):
                 with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
                     writer = csv.writer(csvfile)

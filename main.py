@@ -1,6 +1,10 @@
 import asyncio
 import os.path
 from data.buildcsv import create_csv_file
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 csv_file_path = os.environ['CSV_URL']
 
