@@ -1,0 +1,1 @@
+from .pxplotly import Chart
