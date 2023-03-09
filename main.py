@@ -22,5 +22,6 @@ asyncio.run(main())
 
 from streamlit_app.app import MyApp
 
-app = MyApp()
-asyncio.run(app.run())
+if __name__ == '__main__':
+    app = MyApp()
+    asyncio.run(app.run())
