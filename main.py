@@ -32,14 +32,14 @@ async def main():
         try:
             print(f"Please wait file refreshing.. {file_path}.")
             contents = repo.get_contents(file_path)  # Retrieve the latest contents
-            repo.delete_file(file_path, "update data", contents.sha)
+            await repo.delete_file(file_path, "update data", contents.sha)
         except Exception as e:
             print(f"Error deleting file: {e}")
         await create_csv_file(file_path)
         try:
             with open(file_path, 'rb') as file:
                 content = file.read()
-                repo.create_file(file_path, "refresh data", content)
+                await repo.create_file(file_path, "refresh data", content)
         except Exception as e:
             print(f"Error creating CSV file: {e}")
 

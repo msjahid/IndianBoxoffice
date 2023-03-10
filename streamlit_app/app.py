@@ -1,11 +1,18 @@
 import os
 import streamlit as st
+from dotenv import load_dotenv
 import asyncio
 import pandas as pd
 from . types_chart import *
 # from data.buildcsv import create_csv_file
 chart_instances = [bar_chart_instance, bubble_chart_instance, line_chart_instance, heatmap_chart_instance,
                    box_plot_instance, area_chart_instance]
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Load the environment variables
+csv_url = os.getenv('CSV_URL')
 
 
 class MyApp:
@@ -19,12 +26,10 @@ class MyApp:
                 List of Indian Highest Grossing Movies
             </h1>
         """
-        csv_file_path = os.environ['CSV_URL']
-        if not os.path.exists(csv_file_path):
-            print(f"File not found at {csv_file_path}.")
-            # handle the exception as per your requirement
+        if not csv_url:
+            print(f"File not found at {csv_url}.")
 
-        self.data = pd.read_csv(csv_file_path)
+        self.data = pd.read_csv(csv_url)
 
     async def run(self):
         st.set_page_config(page_title="Indian Highest Grossing Movies",
