@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-csv_file_path = os.environ['CSV_URL']
+csv_file_path = 'https://raw.githubusercontent.com/msjahid/IndianBoxoffice/main/data/highest_grossing_indian_films.csv'
 
 
 async def main():
