@@ -21,7 +21,6 @@ repo = g.get_user(user).get_repo(repo_name)
 
 # Get the contents of the file, or create a new file if it doesn't exist
 file_path = "data/highest_grossing_indian_films.csv"
-contents = None  # Set initial value to None
 
 
 async def main():
@@ -50,4 +49,4 @@ from streamlit_app.app import MyApp
 
 if __name__ == '__main__':
     app = MyApp()
-    asyncio.run(app.run())
+    app.run()
