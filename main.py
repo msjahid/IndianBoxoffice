@@ -1,25 +1,47 @@
 import asyncio
-import os.path
+import os
 from data.buildcsv import create_csv_file
 from dotenv import load_dotenv
+from github import Github
 
 # Load environment variables from .env file
 load_dotenv()
 
-csv_file_path = os.environ['CSV_URL']
+# Load the environment variables
+csv_url = os.getenv('CSV_URL')
+token = os.getenv('GITHUB_ACCESS_TOKEN')
+user = os.getenv('GITHUB_USERNAME')
+repo_name = os.getenv('GITHUB_REPOSITORY')
+
+# Authenticate with GitHub
+g = Github(token)
+
+# Specify the repository details
+repo = g.get_user(user).get_repo(repo_name)
+
+# Get the contents of the file, or create a new file if it doesn't exist
+file_path = "data/highest_grossing_indian_films.csv"
+contents = None  # Set initial value to None
 
 
 async def main():
-    if not os.path.exists(csv_file_path):
-        print(f"File not found at {csv_file_path}.")
-        await create_csv_file(csv_file_path)
+    if not csv_url:
+        print(f"File not found at {file_path}.")
+        await create_csv_file(file_path)
     else:
         try:
-            print(f"Please wait file refreshing.. {csv_file_path}.")
-            os.remove(csv_file_path)
-        except FileNotFoundError:
-            pass
-        await create_csv_file(csv_file_path)
+            print(f"Please wait file refreshing.. {file_path}.")
+            contents = repo.get_contents(file_path)  # Retrieve the latest contents
+            repo.delete_file(file_path, "update data", contents.sha)
+        except Exception as e:
+            print(f"Error deleting file: {e}")
+        await create_csv_file(file_path)
+        try:
+            with open(file_path, 'rb') as file:
+                content = file.read()
+                repo.create_file(file_path, "refresh data", content)
+        except Exception as e:
+            print(f"Error creating CSV file: {e}")
 
 
 asyncio.run(main())

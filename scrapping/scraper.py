@@ -1,42 +1,53 @@
 import os
 import csv
-import requests
+import io
+from github import Github
 from bs4 import BeautifulSoup
+import requests
 
-# Get the path to the current file
-current_dir = os.path.dirname(os.path.abspath(__file__))
+# Load the environment variables
+csv_url = os.getenv('CSV_URL')
+token = os.getenv('GITHUB_ACCESS_TOKEN')
+user = os.getenv('GITHUB_USERNAME')
+repo_name = os.getenv('GITHUB_REPOSITORY')
 
+# Authenticate with GitHub
+g = Github(token)
 
-url = 'https://en.wikipedia.org/wiki/List_of_highest-grossing_Indian_films'
-response = requests.get(url)
+# Specify the repository details
+repo = g.get_user(user).get_repo(repo_name)
+
+# Get the contents of the file, or create a new file if it doesn't exist
+file_path = "data/highest_grossing_indian_films.csv"
+try:
+    contents = repo.get_contents(file_path)
+
+except:
+    repo.create_file(file_path, "create file", "")
+    contents = repo.get_contents(file_path)
+
+# Fetch the CSV data
+response = requests.get(csv_url)
 
 if response.status_code == 200:
-    soup = BeautifulSoup(response.content, 'html.parser')
-    table = soup.find('table', {'class': 'wikitable'})
+    csv_data = response.content.decode('utf-8').splitlines()
 
-    if table is not None:
-        tbody = table.find('tbody')
+    # Parse the CSV data
+    csv_reader = csv.reader(csv_data, delimiter=',')
+    headers = next(csv_reader)
 
-        if tbody is not None:
-            rows = tbody.find_all('tr')
-            header_row = rows[0]
-            headers = [header.text.strip() for header in header_row.find_all('th')[:-1]]
+    # Create the CSV writer object
+    csv_buffer = io.StringIO()
+    csv_writer = csv.writer(csv_buffer, delimiter=',')
 
-            # Create the file if it doesn't exist
-            file_path = os.path.join(current_dir, '../data/highest_grossing_indian_films.csv')
-            if not os.path.isfile(file_path):
-                with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
-                    writer = csv.writer(csvfile)
-                    writer.writerow(headers)
+    # Write the header row to the CSV buffer
+    csv_writer.writerow(headers)
 
-            with open(file_path, 'a', newline='', encoding='utf-8') as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerows([col.text.strip() for col in row.find_all('td')][:8] for row in rows[1:])
-        else:
-            print("Table body element not found in HTML document")
-            print(soup.prettify())
-    else:
-        print("Table element not found in HTML document")
-        print(soup.prettify())
+    # Write the data rows to the CSV buffer
+    for row in csv_reader:
+        csv_writer.writerow(row)
+
+    # Commit the changes to GitHub
+    repo.update_file(file_path, "refresh data", csv_buffer.getvalue(), contents.sha)
 else:
-    print(f"Failed to fetch page: {url}")
+    print(f"Failed to fetch CSV file: {csv_url}")
