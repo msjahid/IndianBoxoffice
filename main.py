@@ -9,9 +9,9 @@ load_dotenv()
 
 # Load the environment variables
 csv_url = os.getenv('CSV_URL')
-token = os.getenv('GITHUB_ACCESS_TOKEN')
-user = os.getenv('GITHUB_USERNAME')
-repo_name = os.getenv('GITHUB_REPOSITORY')
+token = os.getenv('ACCESS_TOKEN')
+user = os.getenv('USERNAME')
+repo_name = os.getenv('REPOSITORY')
 
 # Authenticate with GitHub
 g = Github(token)
