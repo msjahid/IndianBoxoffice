@@ -13,6 +13,9 @@ token = os.getenv('ACCESS_TOKEN')
 user = os.getenv('USERNAME')
 repo_name = os.getenv('REPOSITORY')
 
+# Print the value of the user variable
+print(user)
+
 # Authenticate with GitHub
 g = Github(token)
 
