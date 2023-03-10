@@ -1,6 +1,5 @@
 import os
 import streamlit as st
-from dotenv import load_dotenv
 import asyncio
 import pandas as pd
 from . types_chart import *
@@ -8,11 +7,8 @@ from . types_chart import *
 chart_instances = [bar_chart_instance, bubble_chart_instance, line_chart_instance, heatmap_chart_instance,
                    box_plot_instance, area_chart_instance]
 
-# Load environment variables from .env file
-load_dotenv()
-
 # Load the environment variables
-csv_url = os.getenv('CSV_URL')
+file_path='data/highest_grossing_indian_films.csv'
 
 
 class MyApp:
@@ -26,10 +22,10 @@ class MyApp:
                 List of Indian Highest Grossing Movies
             </h1>
         """
-        if not csv_url:
-            print(f"File not found at {csv_url}.")
+        if not file_path:
+            print(f"File not found at {file_path}.")
 
-        self.data = pd.read_csv(csv_url)
+        self.data = pd.read_csv(file_path)
 
     async def run(self):
         st.set_page_config(page_title="Indian Highest Grossing Movies",
